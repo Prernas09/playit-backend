@@ -14,6 +14,19 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/')
     },
     filename: (req, file, cb) => {
-
+        cb(null, `${Date.now()}-${file.originalname}`)
     }
+})
+
+const upload = multer({storage})
+
+app.post('/upload', upload.single('video'), (req, res) => {
+    if(!req.file){
+        return res.status(400).send('No file uploaded.')
+    }
+    res.json({videoUrl: `http://localhost:${PORT}/${req.file.filename}`})
+})
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 })
